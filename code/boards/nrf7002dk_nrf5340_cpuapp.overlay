@@ -1,0 +1,59 @@
+/*
+ * Copyright (c) 2021 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <zephyr/dt-bindings/ipc_service/static_vrings.h>
+
+/ {
+	chosen {
+		nordic,pm-ext-flash = &mx25r64;
+	};
+};
+
+/* Set IPC thread priority to the highest value to not collide with other threads. */
+&ipc0 {
+	zephyr,priority = <0 PRIO_COOP>;
+};
+
+&adc {
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	channel@0 {
+		reg = <0>;
+		zephyr,gain = "ADC_GAIN_1_4";
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+		zephyr,input-positive = <NRF_SAADC_AIN0>;
+		zephyr,resolution = <10>;
+	};
+
+	channel@1 {
+		reg = <1>;
+		zephyr,gain = "ADC_GAIN_1_4";
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+		zephyr,input-positive = <NRF_SAADC_AIN1>;
+		zephyr,resolution = <10>;
+	};
+};
+
+/ {
+	aliases {
+		burden-ctrl = &burden_ctrl;	
+		charge-ctrl = &charge_ctrl;
+	};
+
+	burden {
+		compatible = "gpio-leds";
+
+		burden_ctrl: burden_ctrl {
+			gpios = <&gpio1 12 GPIO_ACTIVE_HIGH>; /* D10 */
+		};
+		charge_ctrl: charge_ctrl {
+			gpios = <&gpio1 13 GPIO_ACTIVE_HIGH>; /* D11 */
+		};
+	};
+};
